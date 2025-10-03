@@ -87,6 +87,7 @@ function check_length($maxRequests){
     return $length;
 }
 
+/*
 function check_cooldown($user){
     global $cooldownMultiplier;
     global $maxRequests;
@@ -115,11 +116,12 @@ function check_cooldown($user){
         die("Slow down there, part'ner! Try again in 1 minute.");
     }
 }
+*/
 
-function requested_recently($song_id,$requestor,$whitelisted,$interval = 1){
+function requested_recently($song_id,$requestor,$whitelisted,$interval = 3){
     global $conn;
     
-    if(empty($interval) || !is_numeric($interval)){$interval = 1;}
+    if(empty($interval) || !is_numeric($interval)){$interval = 3;}
     $sql0 = "SELECT COUNT(*) AS total 
             FROM sm_requests 
             WHERE song_id = '$song_id' AND (state = 'requested' OR state = 'completed') AND request_time > DATE_SUB(NOW(), INTERVAL $interval HOUR)";
@@ -128,7 +130,7 @@ function requested_recently($song_id,$requestor,$whitelisted,$interval = 1){
 
 	if($row0["total"] > 0){
     //if(($row0["total"] > 0) && ($whitelisted != "true")){
-        die("$requestor => This song has already been requested recently!");
+        die("This song was requested recently!");
     }
 }
 

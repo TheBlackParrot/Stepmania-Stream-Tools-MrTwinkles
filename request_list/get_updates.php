@@ -9,7 +9,7 @@ $conn = mysqli_connect(dbhost, dbuser, dbpass, db);
 if(! $conn ) {die('Could not connect: ' . mysqli_error($conn));}
 $conn->set_charset("utf8mb4");
 
-function format_pack($pack,$requestor){
+/*function format_pack($pack,$requestor){
 	$length = 40;
 	$length = $length - (strlen($requestor) * 0.8);
 
@@ -31,7 +31,7 @@ function format_pack($pack,$requestor){
 		$pack = substr_replace($pack,$separator,$startTrunc,$truncLength);
 	}
 return $pack;
-}   
+}*/   
 
 //Get new requests, cancels, and completions
 
@@ -71,7 +71,7 @@ function get_requests_since($id,$oldid,$broadcaster){
 		}else{
 			$request["img"] = "images/packs/".urlencode(basename($pack_img[0]));
 		}
-		$request["pack"] = format_pack($request["pack"],$request["requestor"]);
+		//$request["pack"] = format_pack($request["pack"],$request["requestor"]);
 
 		//format request type and find image
 		$request["request_type"] = strtolower($request["request_type"]);

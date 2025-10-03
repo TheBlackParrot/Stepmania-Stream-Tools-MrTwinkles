@@ -292,7 +292,7 @@ function scrapeSong(array $songCacheFiles){
 				}else{
 					//bpm is not a range
 					$display_bpm = trim($display_bpm);
-					$display_bpm = round($display_bpm,0);
+					$display_bpm = round(floatval($display_bpm),0);
 				}
 			}
 			if( empty($display_bpm) || $display_bpm <= 0){

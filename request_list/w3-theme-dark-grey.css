@@ -20,3 +20,225 @@
 .w3-hover-theme:hover {color:#fff !important; background-color:#616161 !important}
 .w3-hover-text-theme:hover {color:#616161 !important}
 .w3-hover-border-theme:hover {border-color:#616161 !important}
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('fonts/Manrope-VariableFont_wght.ttf');
+}
+
+@font-face {
+  font-family: 'Lekton';
+  src: url('fonts/Lekton-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Lekton';
+  src: url('fonts/Lekton-Bold.ttf');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Lekton';
+  src: url('fonts/Lekton-Italic.ttf');
+  font-style: italic;
+}
+
+body {
+	background-color: #111 !important;
+	font-family: "Manrope";
+}
+
+.w3-table-all {
+	border: 0px;
+	outline: 1px solid #555;
+	background-color: #333;
+	box-shadow: 0px 0px 5px #000;
+	vertical-align: middle;
+	line-height: 13px;
+}
+
+.w3-table-all tr:nth-child(2) {
+  background-color: #000000;
+	position: sticky;
+	z-index: 1;
+	top: 40px;
+	box-shadow: 0px 5px 5px -4px #000;
+}
+
+.data-heading {
+	background-color: transparent !important;
+	background: linear-gradient(to bottom, #222222c0, #000000c0);
+	backdrop-filter: blur(5px);
+	position: sticky;
+	z-index: 1;
+	top: 0px;
+	border: 0px !important;
+	height: 40px;
+	line-height: 150% !important; /* wtf */
+}
+.data-heading a:hover {
+	color: #cbadff;
+}
+
+.data-heading th {
+	border: 0px !important;
+}
+
+.w3-table-all tr {
+	color: #fff;
+	border-bottom: 1px solid #ffffff30 !important;
+}
+
+.w3-table-all td:nth-child(1) {
+	font-family: "Lekton";
+	font-weight: 900;
+	color: #cbffad;
+	text-align: right;
+	position: relative;
+	top: 2px;
+	z-index: 0;
+}
+
+.w3-table-all tr {
+	border: 0px !important;
+	line-height: 1.25em;
+}
+.w3-table-all td {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+#myTable tr[song_id] {
+	border-bottom: 1px solid #ffffff20 !important;
+}
+#myTable tr[song_id]:nth-child(even) {
+	background-color: #292929;
+}
+#myTable tr[song_id]:nth-child(odd) {
+	background-color: #333;
+}
+
+#myTable {
+	margin-bottom: 32px;
+}
+
+.w3-bar {
+	margin-bottom: 16px;
+	margin-top: 64px; /* wtf */
+	border-radius: 8px;
+	border: 1px solid #555 !important;
+	background-color: #222;
+}
+.w3-bar .w3-button:hover {
+	background-color: #cbadff !important;
+	color: #000 !important;
+}
+
+th a {
+	text-decoration: none;
+	color: #fff;
+}
+
+.data-heading th[colspan] {
+	color: #a0a0a0;
+}
+
+.w3-table-all tr td:nth-child(2) {
+	font-weight: bold;
+}
+
+.w3-table-all tr td:nth-child(n + 7) {
+	text-align: center;
+	color: #ffffffc0;
+	min-width: 36px;
+}
+
+.w3-table-all tr td:nth-child(n + 12),
+.w3-table-all tr th:nth-child(n + 12),
+.w3-table-all colgroup col:nth-child(n + 12),
+.data-heading th:last-child {
+	display: none !important;
+}
+
+.w3-theme {
+	background-color: #000 !important;
+	padding-top: 12px !important;
+	padding-bottom: 16px !important;
+}
+
+center:nth-of-type(4) div {
+	border: 0px !important;
+	outline: 1px solid #555;
+	background-color: #222 !important;
+	border-radius: 8px;
+	margin-top: 16px;
+	margin-bottom: 48px;
+}
+
+.w3-btn {
+	line-height: 24px;
+	border: 0px !important;
+	background: linear-gradient(to bottom, #ffffff90 0%, transparent 90%);
+	background-color: #975bff;
+	border-radius: 8px;
+	padding: 0px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 16px;
+	padding-right: 16px;
+	margin: 2px;
+	margin-top: 8px;
+	color: #fff;
+	font-weight: bold;
+	text-shadow: 0px -1px 0px #00000060;
+	border-bottom: 4px solid #653dab !important;
+}
+
+.w3-btn:hover {
+	background-color: #a673ff;
+	border-bottom: 4px solid #6f4dab !important;
+	box-shadow: none;
+}
+
+.w3-btn:focus {
+	position: relative;
+	top: 2px;
+	border-bottom: 0px !important;
+}
+
+input[type="TEXT"], #pack {
+	border: 1px solid #555 !important;
+	outline: 0px;
+	background-color: #000;
+	color: #fff;
+	padding: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-radius: 8px;
+	margin-bottom: 4px;
+}
+
+input[type="TEXT"]:focus, #pack:focus {
+	border: 1px solid #cbadff !important;
+}
+
+center:nth-of-type(4) div a {
+	display: block;
+	text-decoration: none;
+	color: #fff;
+	margin-top: 4px;
+}
+center:nth-of-type(4) div a:hover {
+	color: #cbadff;
+}
+
+h1, h2, h3, h4 {
+	font-family: "Lekton";
+	font-weight: 900;
+}
+h3 {
+	color: #cbadff;
+}
+h4 {
+	color: #ccc;
+}

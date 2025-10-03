@@ -1,5 +1,11 @@
 function new_request(array){
 	request_id = array.id;
+    
+    if($(`#request_${request_id}`).length) {
+        console.log(`${request_id} already exists`);
+        return;
+    }
+
 	song_id = array.song_id;
 	requestor = array.requestor;
 	request_time = array.request_time;
@@ -35,10 +41,12 @@ function new_request(array){
 
 	console.log("Adding request "+request_id);
 
-    data = `<div class="songrow" style="display:none" id="request_${request_id}">
-    <h2>${title}<h2a>${subtitle}</h2a></h2>
+    data = `<div class="songrow" id="request_${request_id}">
+    <h2>${title}<span class="subtitle">${subtitle}</span></h2>
+    <div class="bottom_row">
     <h3>${pack}</h3>
-    <h4>${requestor}</h4>\n
+    <h4>${requestor}</h4>
+    </div>\n
     ${request_type}\n
     ${difficulty}\n
     ${stepstype}\n
@@ -54,12 +62,10 @@ function new_request(array){
         </div>`;
     }
 
-        $("#lastid").html(request_id);
-        $("#middle").prepend(data);
-        $("#request_"+request_id).slideDown(600);
-        $("#request_"+request_id).first().css("opacity", "0");
-        $("#request_"+request_id).first().css("animation", "wiggle 1.5s forwards");
-        $("#new")[0].play();
+        $("#middle").append(data);
+        //$("#request_"+request_id).slideDown(600);
+        //$("#request_"+request_id).first().css("animation", "wiggle 1.5s forwards");
+        //$("#new")[0].play();
 
 }
 
@@ -69,7 +75,7 @@ function new_cancel(id){
         console.log("Canceling request "+request_id);
         $("#request_"+request_id).slideUp(600, function() {this.remove(); });
         $("#requestadmin_"+request_id).slideUp(600, function() {this.remove(); });
-        $("#cancel")[0].play();
+        //$("#cancel")[0].play();
 	}
 }
 
@@ -93,7 +99,7 @@ function skipped(id){
         console.log("Skipping request "+request_id);
         $("#request_"+request_id).slideUp(600, function() {this.remove(); });
         $("#requestadmin_"+request_id).slideUp(600, function() {this.remove(); });
-        $("#cancel")[0].play();
+        //$("#cancel")[0].play();
 	}
 }
 
@@ -139,39 +145,53 @@ function MarkBanned(id){
         });
 }
 
+function refreshIDNumberRange(id) {
+    if(id > lastid) {
+        lastid = id;
+    }
+
+    if(id < firstid) {
+        firstid = id;
+    }
+}
+
 function refresh_data(){
-lastid = $("#lastid").html();
-oldid = $("#oldid").html();
 security_key = $("#security_key").html();
 broadcaster = $("#broadcaster").html();
-url = `get_updates.php?security_key=${security_key}&broadcaster=${broadcaster}&id=${lastid}&oldid=${oldid}`;
+url = `get_updates.php?security_key=${security_key}&broadcaster=${broadcaster}&id=${lastid}&oldid=${firstid}`;
+console.log(url);
     $.ajax({url: url, success: function(result){
 		if(result){
 			result = JSON.parse(result);
 			if(result["requests"].length > 0){
 				howmany = result["requests"].length;
 				console.log(howmany+" new request(s)");
-                                $.each(result["requests"], function( key, value ) {
-                                	new_request(value);
+                $.each(result["requests"], function( key, value ) {
+                	new_request(value);
+                    refreshIDNumberRange(value.id);
 				});
 			}else{
 				console.log("No new requests");
 			}
-                        if(result["cancels"].length > 0){
-                                $.each(result["cancels"], function( key, value ) {
-                                        new_cancel(value);
-                                });
-                        }
-                        if(result["completions"].length > 0){
-                                $.each(result["completions"], function( key, value ) {
-                                        completion(value);
-                                });
-						}
-						if(result["skips"].length > 0){
-                                $.each(result["skips"], function( key, value ) {
-                                        skipped(value);
-                                }); 
-                        }
+
+            if(result["cancels"].length > 0){
+                $.each(result["cancels"], function( key, value ) {
+                    new_cancel(value);
+                    refreshIDNumberRange(value.id);
+                });
+            }
+            if(result["completions"].length > 0){
+                $.each(result["completions"], function( key, value ) {
+                    completion(value);
+                    refreshIDNumberRange(value.id);
+                });
+			}
+			if(result["skips"].length > 0){
+                $.each(result["skips"], function( key, value ) {
+                    skipped(value);
+                    refreshIDNumberRange(value.id);
+                }); 
+            }
 
 		}else{
 			console.log("Json error downloading data");
@@ -181,6 +201,15 @@ url = `get_updates.php?security_key=${security_key}&broadcaster=${broadcaster}&i
 
 window.setInterval(function(){
 	refresh_data();
-}, 5000);    
+}, 15000);
 
-$(function() {refresh_data();});
+firstid = Infinity;
+lastid = 0;
+window.addEventListener("load", function() {
+    for(let row of $(".songrow")) {
+        refreshIDNumberRange(parseInt($(row).attr("id").replace("request_", "")));
+    }
+
+    console.log(`set firstid to ${firstid}`);
+    console.log(`set lastid to ${lastid}`);
+});

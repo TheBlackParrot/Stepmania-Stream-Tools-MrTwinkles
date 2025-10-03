@@ -1,31 +1,5 @@
 <?php
-//get domain and subdomain
-$fulldomain = $_SERVER['SERVER_NAME'];
-$domain = substr($fulldomain,strpos($fulldomain,'.')+1,strrpos($fulldomain,'.'));
-if($domain == 'smrequests.com' || $domain == 'smrequests.dev'){
-	$subdomain = substr($fulldomain,0,strpos($fulldomain,'.'));
-	if( substr(strrev($subdomain),0,1)=="s"){
-		$subdomain = ucfirst($subdomain.'\'');
-	}else{
-		$subdomain = ucfirst($subdomain.'\'s');
-	}
-	//setup dynamic strings for smrequests hosts
-	$pageTitle = $subdomain." Songlist";
-	$googleTag = "<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-R45DT9VTL6\"></script>
-	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	
-	  gtag('config', 'G-R45DT9VTL6');
-	</script>";
-	$hostingFooter = "Hosting provided by <a href=\"https://$domain\" target=\"_blank\">SMRequests</a>.";
-}else{
 	$pageTitle = "SM5 Songlist";
-	$googleTag = "";
-	$hostingFooter = "";
-}
 ?>
 
 <html>
@@ -45,8 +19,8 @@ if($domain == 'smrequests.com' || $domain == 'smrequests.dev'){
 		background-color:#303030;
 	}
 </style>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="Chart.min.js"></script>
+<script type="text/javascript" src="jquery.min.js"></script>
 <script>
 $(document).ready(function(){
   $("tr").click(function(){
@@ -57,7 +31,6 @@ $(document).ready(function(){
   });
 });
 </script>
-<?php echo $googleTag.PHP_EOL; ?>
 </head>
 
 <body>
@@ -85,7 +58,7 @@ function escape_string($str){
 	global $conn;
 	$str = htmlspecialchars($str);
 	$str = mysqli_real_escape_string($conn, $str);
-return $str;	
+	return $str;	
 }
 
 //if no variables are set, order table by random to encourage song discovery
@@ -119,9 +92,9 @@ if(!isset($_GET['order']) && !isset($_GET['query']) && !isset($_GET['sort']) && 
 	
 	//get selected pack from dropdown
 	if(isset($_GET['pack']) && isset($_GET['order'])){
-		$pack = escape_string($_GET['pack']);
+		$pack = mysqli_real_escape_string($conn, $_GET['pack']);
 	}elseif(isset($_GET['pack']) && !isset($_GET['order'])){
-		$pack = escape_string($_GET['pack']);
+		$pack = mysqli_real_escape_string($conn, $_GET['pack']);
 		$order = 'TITLE';
 	}else{
 		$pack = "";
@@ -135,7 +108,7 @@ if(isset($_GET['pageno'])){
 	$pageno = 1;
 }
 
-$no_of_records_per_page = 50;
+$no_of_records_per_page = 100;
 $offset = ($pageno-1) * $no_of_records_per_page;
 
 //was the random button clicked?		
@@ -156,10 +129,7 @@ $no_of_packs = mysqli_fetch_array($result)[0];
 echo '<center><h3>' . number_format($no_of_songs,0,0,",") . ' songs in ' . number_format($no_of_packs,0,0,",") . ' packs</h3></center>';
 
 //show how to request a song and other commands
-echo '<center><h4>To request a song, type <strong>!request [<i>songname</i>]</strong> into the chat or <strong>!requestid [<i>id</i>]</strong>, if you know the ID# of the song.<br>
-Made an Oops!, use <strong>!cancel</strong> to cancel your last request.<br>
-Feeling lucky, use <strong>!random</strong> for a random song or <strong>!top</strong> for a top 100 song.
-</h4></center>';
+echo '<center><h4>To request a song, type <strong>!smr [<i>id</i>]</strong> into the chat!</h4></center><br>';
 
 //get distinct packs and # of songs from db and set as array
 $packlist = array();
@@ -319,9 +289,9 @@ echo '<table class="w3-table-all w3-margin-top" id="myTable">
 	<col style="width: 2%">
 	<col style="width: 27%">
 	<col style="width: 27%">
-	<col style="width: 27%">
+	<col style="width: 25%">
+	<col style="width: 4%">
 	<col style="width: 5%">
-	<col style="width: 2%">
 	<col style="width: 1%">
 	<col style="width: 1%">
 	<col style="width: 1%">
@@ -374,12 +344,15 @@ while ($row = mysqli_fetch_array($result)) {
 
 	$s_id = $row["id"];
 
+	$time_parts = array_slice(explode(":", $row["LENGTH"]), 1, 2);
+	$time_parts[0] = intval($time_parts[0]);
+
 	$songs["$s_id"]["id"]=$row["id"];
 	$songs["$s_id"]["title"]=$row["title"];
 	$songs["$s_id"]["artist"]=$row["artist"];
 	$songs["$s_id"]["pack"]=$row["pack"];
 	$songs["$s_id"]["bpm"]=$row["BPM"];
-	$songs["$s_id"]["length"]=$row["LENGTH"];
+	$songs["$s_id"]["length"]=implode(":", $time_parts);
 
 	
 	foreach($charts as $difficulty){
@@ -388,7 +361,7 @@ while ($row = mysqli_fetch_array($result)) {
 		$songs["$s_id"]["charts"]["$difficulty"]["chartname"]=$row["chartname_$difficulty"];
 		$songs["$s_id"]["charts"]["$difficulty"]["description"]=$row["description_$difficulty"];
 
-		$songs["$s_id"]["charts"]["$difficulty"]["radar"]=$row["radar_$difficulty"];
+		/*$songs["$s_id"]["charts"]["$difficulty"]["radar"]=$row["radar_$difficulty"];
 		if($songs["$s_id"]["charts"]["$difficulty"]["radar"] != ""){
 			$exploded_radar = explode(",",$songs["$s_id"]["charts"]["$difficulty"]["radar"]);
 			$songs["$s_id"]["charts"]["$difficulty"]["groove_radar"] = "$exploded_radar[0], $exploded_radar[4], $exploded_radar[3], $exploded_radar[2], $exploded_radar[1]";
@@ -424,7 +397,7 @@ while ($row = mysqli_fetch_array($result)) {
 			$songs["$s_id"]["charts"]["$difficulty"]["rolls"] = "";
 			$songs["$s_id"]["charts"]["$difficulty"]["difficulty"] = "";
 			$songs["$s_id"]["charts"]["$difficulty"]["stepstype"] = "";
-		}
+		}*/
 	}
 
 }
@@ -451,8 +424,9 @@ foreach($songs as $song){
 	<td style=\"background-color: rgba(102, 250, 0, 0.2);\">{$song["charts"]["HDP"]["meter"]}</td>
 	<td style=\"background-color: rgba(112, 104, 250, 0.2);\">{$song["charts"]["CDP"]["meter"]}</td>
 	<td style=\"background-color: rgba(150, 150, 150, 0.2);\">{$song["charts"]["XDP"]["meter"]}</td>";
+	echo "</tr>";
 
-	echo "</tr>
+	/*echo "</tr>
 	<tr style=\"display:none;\" id=\"{$song["id"]}\">
 		<td colspan=2>
 		<table class=\"w3-small\" style=\"padding: 0px 0px\">
@@ -683,7 +657,7 @@ foreach($songs as $song){
 
 	echo "</td>	
 	</tr>
-	";
+	";*/
 
 }
 echo "</tbody></table>";
@@ -712,7 +686,6 @@ mysqli_close($conn);
 
 <div class="w3-padding-small w3-container w3-theme w3-center">
 SMRequests is a song request and hosted songlist tool for live streaming StepMania 5. Check out the current project on <a href="https://github.com/MrTwinkles47/Stepmania-Stream-Tools-MrTwinkles" target="_blank">Github</a>. Thanks to <a href="https://twitch.tv/ddrdave" target="_blank">ddrDave</a> for the original project and concept.
-<?php echo $hostingFooter.PHP_EOL; ?>
 </div>
 
 </html>

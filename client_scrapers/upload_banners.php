@@ -309,10 +309,12 @@ foreach ($img_arr as $img){
 	//	echo "Banner for ". $img['pack_name'] . " already exists. Skipping...".PHP_EOL;
 	//}else{
 		//upload banner images
+		echo "Checking " . $img['pack_name'] . "..." . PHP_EOL;
 		if(curl_upload($img['img_path'],$img['pack_name']) === 0){
 			$banners_copied++;
 		}
 	//}
+		sleep(1);
 }
 
 $cPacks = $cPacks - $notFoundBanners;

@@ -4,7 +4,7 @@ require_once ('config.php');
 require_once ('misc_functions.php');
 
 if(!isset($_GET["security_key"]) || $_GET["security_key"] != $security_key || empty($_GET["security_key"])){
-    die("Fuck off");
+    die("Invalid key");
 }
 
 if(!isset($_GET["song"]) && !isset($_GET["songid"]) && !isset($_GET["cancel"]) && !isset($_GET["skip"]) && !isset($_GET["complete"])){
@@ -12,7 +12,7 @@ if(!isset($_GET["song"]) && !isset($_GET["songid"]) && !isset($_GET["cancel"]) &
 }
 
 if(!isset($_GET["user"])){
-	die("Error");
+	die("No user");
 }
 
 function check_banned($song_id, $user){
@@ -21,7 +21,7 @@ function check_banned($song_id, $user){
 	$sql0 = "SELECT * FROM sm_songs WHERE installed=1 AND id = '{$song_id}' LIMIT 1";
 	if( mysqli_fetch_assoc( mysqli_query( $conn,$sql0))['banned'] == 1)
 		{
-		die("I'm sorry $user, but I'm afraid I can't do that.");
+		die("This map is banned, sorry!");
 		}
 }
 
@@ -35,9 +35,9 @@ function request_song($song_id, $requestor, $tier, $twitchid, $broadcaster, $com
 		if($userobj["banned"] == "true"){
 			die();
 		}   
-		if($userobj["whitelisted"] != "true"){
+		/*if($userobj["whitelisted"] != "true"){
 			check_cooldown($requestor);
-		}
+		}*/
 		requested_recently($song_id,$requestor,$userobj["whitelisted"]);
 	}
 	
@@ -59,7 +59,7 @@ function request_song($song_id, $requestor, $tier, $twitchid, $broadcaster, $com
 	$stepstype = $commandArgs['stepstype'];
 	$difficulty = $commandArgs['difficulty'];
 	
-	$sql = "INSERT INTO sm_requests (song_id, request_time, requestor, twitch_tier, broadcaster, request_type, stepstype, difficulty) VALUES ('{$song_id}', NOW(), '{$requestor}', '{$tier}', '{$broadcaster}', 'normal', '{$stepstype}', '{$difficulty}')";
+	$sql = "INSERT INTO sm_requests (song_id, request_time, requestor, twitch_tier, broadcaster, request_type, stepstype, difficulty) VALUES ('{$song_id}', NOW(), '{$requestor}', 'user', '{$broadcaster}', 'normal', '{$stepstype}', '{$difficulty}')";
 	mysqli_query( $conn, $sql );
 }
 
@@ -67,6 +67,7 @@ $conn = mysqli_connect(dbhost, dbuser, dbpass, db);
 if(! $conn ) {die('Could not connect: ' . mysqli_error($conn));}
 $conn->set_charset("utf8mb4");
 
+/*
 //check if the active channel category/game is StepMania, etc.
 if(isset($_GET["game"]) && !empty($_GET["game"])){
 	$game = mysqli_real_escape_string($conn,$_GET["game"]);
@@ -74,9 +75,10 @@ if(isset($_GET["game"]) && !empty($_GET["game"])){
         die("Hmmm...I don't think it's possible to request songs in ".$game.".");
     }
 }
+*/
 
 $user = mysqli_real_escape_string($conn,$_GET["user"]);
-$tier = mysqli_real_escape_string($conn,$_GET["tier"]);
+//$tier = mysqli_real_escape_string($conn,$_GET["tier"]);
 $twitchid = 0;
 if(isset($_GET["userid"])){
 	$twitchid = mysqli_real_escape_string($conn,$_GET["userid"]);
@@ -105,7 +107,7 @@ if(isset($_GET["cancel"])){
 	}elseif(empty($_GET["cancel"])){
 		$num = 0;
 	}else{
-		die("Good one, ".$user. ", but only positive integers are allowed!");
+		die("Only positive numbers are allowed!");
 	}
 
         $sql = "SELECT * FROM sm_requests WHERE requestor = '{$user}' AND broadcaster LIKE '{$broadcasterQuery}' AND state <> 'canceled' AND state <> 'skipped' AND state <> 'completed' ORDER BY request_time DESC LIMIT 1 OFFSET {$num}";
@@ -140,10 +142,10 @@ if(isset($_GET["skip"])){
 	}elseif(empty($_GET["skip"])){
 		$num = 0;
 	}else{
-		die("Good one, ".$user. ", but only positive integers are allowed!");
+		die("Only positive numbers are allowed!");
 	}
 
-	$sql = "SELECT * FROM sm_requests WHERE broadcaster LIKE '{$broadcasterQuery}' AND state <> 'canceled' AND state <> 'skipped' AND state <> 'completed' ORDER BY request_time DESC LIMIT 1 OFFSET {$num}";
+	$sql = "SELECT * FROM sm_requests WHERE broadcaster LIKE '{$broadcasterQuery}' AND state <> 'canceled' AND state <> 'skipped' AND state <> 'completed' ORDER BY request_time ASC LIMIT 1 OFFSET {$num}";
         $retval = mysqli_query( $conn, $sql );
 
                 while($row = mysqli_fetch_assoc($retval)) {
@@ -154,7 +156,7 @@ if(isset($_GET["skip"])){
 					while($row2 = mysqli_fetch_assoc($retval2)){
 						$sql3 = "UPDATE sm_requests SET state=\"skipped\" WHERE id = \"$request_id\"";
 						$retval3 = mysqli_query( $conn, $sql3 );
-						echo "$user skipped ".trim($row2["title"]." ".$row2["subtitle"]);
+						echo "Skipped ".trim($row2["title"]." ".$row2["subtitle"]);
 					}
                 }
 
@@ -168,7 +170,7 @@ if(isset($_GET["complete"])){
 	}elseif(empty($_GET["complete"])){
 		$num = 0;
 	}else{
-		die("Good one, ".$user. ", but only positive integers are allowed!");
+		die("Only positive numbers are allowed!");
 	}
 
 	$sql = "SELECT * FROM sm_requests WHERE broadcaster LIKE '{$broadcasterQuery}' AND state <> 'canceled' AND state <> 'skipped' AND state <> 'requested' ORDER BY request_time DESC LIMIT 1 OFFSET {$num}";
@@ -182,7 +184,7 @@ if(isset($_GET["complete"])){
 					while($row2 = mysqli_fetch_assoc($retval2)){
 						$sql3 = "UPDATE sm_requests SET state=\"completed\" WHERE id = \"$request_id\"";
 						$retval3 = mysqli_query( $conn, $sql3 );
-						echo "$user completed ".trim($row2["title"]." ".$row2["subtitle"]);
+						echo "Completed ".trim($row2["title"]." ".$row2["subtitle"]);
 					}
                 }
 
@@ -193,7 +195,7 @@ if(isset($_GET["songid"]) && !empty($_GET["songid"])){
 	$commandArgs = parseCommandArgs($_GET["songid"],$user,$broadcaster);
 
 	if(empty($commandArgs["song"])){
-		echo "$user didn't specify a song ID!";
+		echo "No song/map ID specified";
 		die();
 	}
 
@@ -201,7 +203,7 @@ if(isset($_GET["songid"]) && !empty($_GET["songid"])){
 	$song = clean($commandArgs["song"]);
 	$song = preg_replace('/\D/','',$song);
 	if(!is_numeric($song) || empty($song)){
-		echo "$user gave an invalid song ID!";
+		echo "Invalid song/map ID";
 		die();
 	}
         //lookup by ID and request it
@@ -211,14 +213,14 @@ if(isset($_GET["songid"]) && !empty($_GET["songid"])){
 
 	if (mysqli_num_rows($retval) == 1) {
     		while($row = mysqli_fetch_assoc($retval)) {
-        		request_song($row["id"], $user, $tier, $twitchid, $broadcaster, $commandArgs);
+        		request_song($row["id"], $user, "user", $twitchid, $broadcaster, $commandArgs);
 				$displayModeDiff = display_ModeDiff($commandArgs);
 				$displayArtist = get_duplicate_song_artist ($row["id"]);
         		echo "$user requested " . trim($row["title"]." ".$row["subtitle"]). $displayArtist . " from " . $row["pack"].$displayModeDiff;
         		die();
     		}
 	} else {
-        	echo "$user => Didn't find any songs matching the ID: " . $song . "!";
+        	echo "No songs match ID: " . $song . "";
         	die();
 }
 
@@ -246,7 +248,7 @@ if(isset($_GET["song"]) && !empty($_GET["song"])){
 
 	if (mysqli_num_rows($retval) == 1) {
 		while($row = mysqli_fetch_assoc($retval)) {
-        	request_song($row["id"], $user, $tier, $twitchid, $broadcaster, $commandArgs);
+        	request_song($row["id"], $user, "user", $twitchid, $broadcaster, $commandArgs);
 			$displayModeDiff = display_ModeDiff($commandArgs);
 			$displayArtist = get_duplicate_song_artist ($row["id"]);
         	echo "$user requested " . trim($row["title"]." ".$row["subtitle"]). $displayArtist . " from " . $row["pack"].$displayModeDiff;;
@@ -264,7 +266,7 @@ if(isset($_GET["song"]) && !empty($_GET["song"])){
 
 	if (mysqli_num_rows($retval) == 1) {
     	while($row = mysqli_fetch_assoc($retval)) {
-			request_song($row["id"], $user, $tier, $twitchid, $broadcaster, $commandArgs);
+			request_song($row["id"], $user, "user", $twitchid, $broadcaster, $commandArgs);
 			$displayModeDiff = display_ModeDiff($commandArgs);
 			$displayArtist = get_duplicate_song_artist ($row["id"]);
         	echo "$user requested " . trim($row["title"]." ".$row["subtitle"]). $displayArtist . " from " . $row["pack"].$displayModeDiff;;

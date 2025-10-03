@@ -10,7 +10,7 @@ $conn = mysqli_connect(dbhost, dbuser, dbpass, db);
 if(! $conn ) {die('Could not connect: ' . mysqli_error($conn));}
 $conn->set_charset("utf8mb4");
    
-function format_pack($pack,$requestor){
+/*function format_pack($pack,$requestor){
 	$length = 40;
 	$length = $length - (strlen($requestor) * 0.8);
 
@@ -32,7 +32,7 @@ function format_pack($pack,$requestor){
 		$pack = substr_replace($pack,$separator,$startTrunc,$truncLength);
 	}
 return $pack;
-}   
+}   */
 
 if(isset($_GET["broadcaster"]) && !empty($_GET["broadcaster"])){
 	$broadcaster = $_GET["broadcaster"];
@@ -46,7 +46,6 @@ echo '<html>
 <head>
 <link rel="stylesheet" href="style.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="scripts.js"></script>
 </head>
 
 <body>
@@ -69,8 +68,8 @@ echo '<html>
 	$sql = "SELECT sm_requests.id AS id, sm_requests.song_id AS song_id, title, subtitle, artist, pack, requestor, request_time, request_type, stepstype, difficulty 
 			FROM sm_requests 
 			JOIN sm_songs ON sm_songs.id = sm_requests.song_id 
-			WHERE (state = 'requested' OR state = 'completed') AND broadcaster LIKE '$broadcaster'  
-			ORDER BY request_time DESC LIMIT $requestWidgetLength";
+			WHERE (state = 'requested') AND broadcaster LIKE '$broadcaster'  
+			ORDER BY request_time ASC LIMIT $requestWidgetLength";
 	$retval = mysqli_query( $conn, $sql ) or die(mysqli_error($conn));
 
 	while($row = mysqli_fetch_assoc($retval)) {
@@ -80,7 +79,8 @@ echo '<html>
 		$requestor = $row["requestor"];
 		$title = $row["title"];
 		$subtitle = $row["subtitle"];
-		$pack = format_pack($row["pack"],$requestor);
+		//$pack = format_pack($row["pack"],$requestor);
+		$pack = $row["pack"];
 		$request_type = strtolower($row["request_type"]);
 		$stepstype = strtolower($row["stepstype"]);
 		$difficulty = strtolower($row["difficulty"]);
@@ -127,9 +127,11 @@ echo '<html>
 		}
 		
 		echo "<div class=\"songrow\" id=\"request_".$request_id."\">			
-		<h2>$title<h2a>$subtitle</h2a></h2>
+		<h2>$title<span class=\"subtitle\">$subtitle</span></h2>
+		<div class=\"bottom_row\">
 		<h3>$pack</h3>
-		<h4>$requestor</h4>";
+		<h4>$requestor</h4>
+		</div>";
 		echo $request_type."\n";
 		echo $difficulty."\n";
 		echo $stepstype."\n";
@@ -156,9 +158,30 @@ if(!is_array($ids) || empty($ids)){
 }
 	
 echo "<span id=\"oldid\" style=\"display:none;\">{$oldid}</span>\n";
-echo "
+echo '
+<div id="filterWrapper">
+		<svg xmlns="http://www.w3.org/2000/svg">
+			<filter id="outlineEffect" color-interpolation-filters="sRGB">
+				<feConvolveMatrix in="SourceAlpha" result="OutlineAlpha" divisor="4" order="5,5" kernelMatrix="0 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 0"/>
+				<feFlood flood-color="#000000" result="OutlineColor" />
+				<feComposite in="OutlineColor" in2="OutlineAlpha" operator="in" result="Outline" />
+
+				<feMerge>
+					<feMergeNode in="Outline"/>
+					<feMergeNode in="SourceGraphic"/>
+				</feMerge>
+			</filter>
+
+			<filter id="shadowEffect" color-interpolation-filters="sRGB">
+				<feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000"/>
+			</filter>
+			<filter id="blankEffect"></filter>
+		</svg>
+	</div>
 </div>
-</html>";
+<script src="scripts.js"></script>
+</body>
+</html>';
 
 mysqli_close($conn);
 ?>

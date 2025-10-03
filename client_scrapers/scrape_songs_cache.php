@@ -585,6 +585,8 @@ foreach ($files as $filesChunk){
 	echo "Sending ".$currentChunk." of ".$totalChunks." chunk(s) to SMRequests..." . PHP_EOL;
 	wh_log("Sending ".$currentChunk." of ".$totalChunks." chunk(s) to SMRequests...");
 	if(!empty($cache_array)){
+		wh_log("Sleeping for 5 seconds because CloudFlare dumb (TheBlackParrot)");
+		sleep(5);
 		curlPost("songs", $cache_array);
 	}
 	//show progress of file chunks
