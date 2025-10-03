@@ -45,12 +45,10 @@ if(!isset($_GET["middle"])){
 echo '<html>
 <head>
 <link rel="stylesheet" href="style.css" />
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="jquery.min.js"></script>
 </head>
 
 <body>
-<audio id="new" src="new.mp3" type="audio/mpeg"></audio>
-<audio id="cancel" src="cancel.mp3" type="audio/mpeg"></audio>
 <div id="middle">
 
 ';

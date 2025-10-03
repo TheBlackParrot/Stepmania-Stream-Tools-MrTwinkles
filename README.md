@@ -5,6 +5,34 @@ A tool for viewer song requests for live streaming StepMania 5 on Twitch
 **Check out the new [wiki](https://github.com/MrTwinkles47/Stepmania-Stream-Tools-MrTwinkles/wiki/Getting-Started)!**
 
 ---
+
+### Changes from upstream:
+- Overhauled the look of the request list view
+- Overhauled the look of the song list view
+- Removed the doubles difficulties in the song list table
+  - (I don't play doubles, no need to show 'em) 
+- Removed chart detail slide-outs from the song list table
+- Removed some server-sided command cooldowns
+  - (I'm letting my bot handle this) 
+- Removed external dependencies on JQuery and Chart in the song list view and request view
+- Removed sounds from the request view
+- Removed tier checks on request commands
+  - (I'm also letting my bot handle this)
+- Removed game/category checks on request commands
+  - (I'm also *also* letting my bot handle this)
+- Removed official domain checks on the song list view and forcibly assume it's being self-hosted
+- Removed any reference to Google Analytics in the song list view
+- Changed the request flow so that the oldest request will always be first in the list
+- Prevented duplicate request entries from showing in the request view
+- Completed request entries are now skipped over in the request view
+- Increased "recently requested" time span from 1 hour to 3 hours
+- Increased song list view entries from 50 per page to 100 per page
+- Fixed some teeny tiny issues with PHP 8 on the server-side
+- Fixed some escaping issues with pack names that have special characters in the song list view
+- Slowed some scraper functionality down as to not trip my server's/Cloudflare's attack protections (lol)
+- Slowed down request view updates from 5 seconds to 15 seconds
+
+---
 ## SMRequests features
 * Public songlist webpage that supports searching and display of additional song/chart information.
 * Viewers can request songs via Twitch chat.
