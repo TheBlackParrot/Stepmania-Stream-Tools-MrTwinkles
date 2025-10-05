@@ -182,7 +182,6 @@ th a {
 	padding: 2px;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
-	filter: drop-shadow(0px 1px 1px #000);
 }
 
 .w3-table-all tr td:nth-child(n + 12),
@@ -255,21 +254,25 @@ input[type="TEXT"]:focus, #pack:focus {
 }
 
 center:nth-of-type(4) div a {
-	display: block;
 	text-decoration: none;
 	color: #fff;
-	margin-top: 4px;
+	display: inline-block;
+	top: 4px;
+	position: relative;
 }
 center:nth-of-type(4) div a:hover {
 	color: #cbadff;
 }
 
 h1, h2, h3, h4, h5 {
-	font-family: "Lekton";
+	font-family: "Manrope";
 	font-weight: 900;
 }
 h3 {
 	color: #cbadff;
+	font-family: "Lekton";
+	font-size: 24pt;
+	text-shadow: 0px 2px 3px #000, 0px 0px 12px #cbadff;
 }
 h4, h5 {
 	color: #ccc;

@@ -5,6 +5,7 @@
 <html>
 <head>
 <title><?php echo $pageTitle; ?></title>
+<meta name="theme-color" content="#cbadff"/>
 <link rel="stylesheet" 
 	href="w3.css">
 <link rel="stylesheet" 
@@ -158,7 +159,7 @@ echo  '<select name="pack" id="pack" style="width:100%" class="w3-input w3-paddi
 		}
 echo '</select>';
 echo '<input type="SUBMIT" value="Search" class="w3-btn w3-border"/>
-	  <input type="SUBMIT" name="random" value="Random" class="w3-btn w3-border"/>
+	  <input type="SUBMIT" name="random" value="Random" class="w3-btn w3-border"/><br/>
 	  <a href="songlist.php">Reset</a>';
 echo '</form>';
 echo '</div></center>';
@@ -260,12 +261,12 @@ $query = stripslashes($query);
 
 //show summary of results above table
 if (strlen($query)<1 && strlen($pack)<1){
-		echo '<div class="w3padding-small"><h3>All songs sorted ';
+		echo '<div class="w3padding-small"><h4>All songs sorted ';
 			if($order == 'RAND()') {
 			echo 'randomly'; 
 			}else{ echo 'by '.$order.'';
 			}
-		echo ':</h3></div>';
+		echo ':</h4></div>';
 	}else{
 		echo '<div class="w3padding-small"><h3>Found ' .number_format($total_rows,0,0,",").' song(s) ';
 		if(strlen($query)>0){
