@@ -43,6 +43,16 @@
   font-style: italic;
 }
 
+@font-face {
+  font-family: 'Sofia Sans Condensed';
+  src: url('fonts/SofiaSansCondensed-VariableFont_wght.ttf');
+}
+@font-face {
+  font-family: 'Sofia Sans Condensed';
+  src: url('fonts/SofiaSansCondensed-Italic-VariableFont_wght.ttf');
+  font-style: italic;
+}
+
 body {
 	background-color: #111 !important;
 	font-family: "Manrope";
@@ -97,6 +107,12 @@ body {
 	position: relative;
 	top: 2px;
 	z-index: 0;
+	cursor: default;
+}
+
+.w3-table-all td:nth-child(1):hover {
+	color: #ebffcd;
+	text-shadow: 0px 0px 3px #cbffad;
 }
 
 .w3-table-all tr {
@@ -116,6 +132,9 @@ body {
 }
 #myTable tr[song_id]:nth-child(odd) {
 	background-color: #333;
+}
+#myTable tr[song_id]:hover {
+	background-color: #ffffff0c;
 }
 
 #myTable {
@@ -149,8 +168,21 @@ th a {
 
 .w3-table-all tr td:nth-child(n + 7) {
 	text-align: center;
-	color: #ffffffc0;
-	min-width: 36px;
+	min-width: 40px;
+	font-family: "Sofia Sans Condensed";
+	font-weight: 800;
+	font-size: 15pt;
+	font-style: italic;
+	letter-spacing: 0.03em;
+	vertical-align: middle;
+}
+
+.w3-table-all tr td:nth-child(n + 7) span {
+	background: linear-gradient(170deg, #ffffffe0 15%, #ffffff70 75%);
+	padding: 2px;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	filter: drop-shadow(0px 1px 1px #000);
 }
 
 .w3-table-all tr td:nth-child(n + 12),
@@ -232,13 +264,40 @@ center:nth-of-type(4) div a:hover {
 	color: #cbadff;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
 	font-family: "Lekton";
 	font-weight: 900;
 }
 h3 {
 	color: #cbadff;
 }
-h4 {
+h4, h5 {
 	color: #ccc;
+	margin: 0;
+	line-height: 1em;
+}
+
+#notifications {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	width: 100%;
+	pointer-events: none;
+}
+
+#notifications div {
+	margin: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	padding-right: 8px;
+	border-radius: 4px;
+	border: 1px solid #555;
+	background-color: #000000c0;
+	backdrop-filter: blur(5px);
+	box-shadow: 0px 2px 2px -1px #000;
+	color: #fff;
+	font-size: 10pt;
+	font-family: "Manrope";
+	font-weight: 500;
 }

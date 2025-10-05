@@ -129,7 +129,7 @@ $no_of_packs = mysqli_fetch_array($result)[0];
 echo '<center><h3>' . number_format($no_of_songs,0,0,",") . ' songs in ' . number_format($no_of_packs,0,0,",") . ' packs</h3></center>';
 
 //show how to request a song and other commands
-echo '<center><h4>To request a song, type <strong>!smr [<i>id</i>]</strong> into the chat!</h4></center><br>';
+echo '<center><h4>To request a song, type <strong>!smr [<i>id</i>]</strong> into the chat!</h4><br><h5>(You can also click the song IDs to copy the request command!)</h5></center><br>';
 
 //get distinct packs and # of songs from db and set as array
 $packlist = array();
@@ -412,18 +412,18 @@ foreach($songs as $song){
 	<td>{$song["pack"]}</td>
 	<td>{$song["length"]}</td>
 	<td>{$song["bpm"]}</td>
-	<td style=\"background-color: rgba(0, 255, 255, 0.2);\">{$song["charts"]["BSP"]["meter"]}</td>
-	<td style=\"background-color: rgba(251, 169, 0, 0.2);\">{$song["charts"]["ESP"]["meter"]}</td>
-	<td style=\"background-color: rgba(250, 0, 160, 0.2);\">{$song["charts"]["MSP"]["meter"]}</td>
-	<td style=\"background-color: rgba(102, 250, 0, 0.2);\">{$song["charts"]["HSP"]["meter"]}</td>
-	<td style=\"background-color: rgba(112, 104, 250, 0.2);\">{$song["charts"]["CSP"]["meter"]}</td>
-	<td style=\"background-color: rgba(150, 150, 150, 0.2);\">{$song["charts"]["XSP"]["meter"]}</td>
-	<td style=\"background-color: rgba(0, 255, 255, 0.2);\">{$song["charts"]["BDP"]["meter"]}</td>
-	<td style=\"background-color: rgba(251, 169, 0, 0.2);\">{$song["charts"]["EDP"]["meter"]}</td>
-	<td style=\"background-color: rgba(250, 0, 160, 0.2);\">{$song["charts"]["MDP"]["meter"]}</td>
-	<td style=\"background-color: rgba(102, 250, 0, 0.2);\">{$song["charts"]["HDP"]["meter"]}</td>
-	<td style=\"background-color: rgba(112, 104, 250, 0.2);\">{$song["charts"]["CDP"]["meter"]}</td>
-	<td style=\"background-color: rgba(150, 150, 150, 0.2);\">{$song["charts"]["XDP"]["meter"]}</td>";
+	<td style=\"background-color: rgba(0, 255, 255, 0.2);\"><span>{$song["charts"]["BSP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(251, 169, 0, 0.2);\"><span>{$song["charts"]["ESP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(250, 0, 160, 0.2);\"><span>{$song["charts"]["MSP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(102, 250, 0, 0.2);\"><span>{$song["charts"]["HSP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(112, 104, 250, 0.2);\"><span>{$song["charts"]["CSP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(150, 150, 150, 0.2);\"><span>{$song["charts"]["XSP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(0, 255, 255, 0.2);\"><span>{$song["charts"]["BDP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(251, 169, 0, 0.2);\"><span>{$song["charts"]["EDP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(250, 0, 160, 0.2);\"><span>{$song["charts"]["MDP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(102, 250, 0, 0.2);\"><span>{$song["charts"]["HDP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(112, 104, 250, 0.2);\"><span>{$song["charts"]["CDP"]["meter"]}</span></td>
+	<td style=\"background-color: rgba(150, 150, 150, 0.2);\"><span>{$song["charts"]["XDP"]["meter"]}</span></td>";
 	echo "</tr>";
 
 	/*echo "</tr>
@@ -688,6 +688,10 @@ mysqli_close($conn);
 SMRequests is a song request and hosted songlist tool for live streaming StepMania 5. Check out the current project on <a href="https://github.com/MrTwinkles47/Stepmania-Stream-Tools-MrTwinkles" target="_blank">Github</a>. Thanks to <a href="https://twitch.tv/ddrdave" target="_blank">ddrDave</a> for the original project and concept.
 </div>
 
-</html>
+<script src="songlist.js"></script>
+
+<div id="notifications">
+</div>
 </body>
+</html>
 <?php die(); ?>
