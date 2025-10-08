@@ -32,6 +32,8 @@ A tool for viewer song requests for live streaming StepMania 5 on Twitch
 - Slowed some scraper functionality down as to not trip my server's/Cloudflare's attack protections (lol)
 - Slowed down request view updates from 5 seconds to 15 seconds
 - Added a click event to the numeric IDs that will copy a request command to the clipboard
+- Randomness in the song list is seeded to allow pagination to make sense on random sort
+- Songlist query parameters are hardened, will ensure sane defaults are set for invalid parameter values
 
 ---
 ## SMRequests features

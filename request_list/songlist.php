@@ -62,9 +62,14 @@ function escape_string($str){
 	return $str;	
 }
 
+$rand_seed = time();
+
+$allowedSorts = ["ID", "TITLE", "ARTIST", "PACK", "LENGTH", "BPM"];
+$allowedDirs = ["ASC", "DESC"];
+
 //if no variables are set, order table by random to encourage song discovery
 if(!isset($_GET['order']) && !isset($_GET['query']) && !isset($_GET['sort']) && !isset($_GET['pack'])){
-	$order = 'RAND()';
+	$order = 'RAND(' . $rand_seed . ')';
 	$query = "";
 	$pack = "";
 	$sort = 'ASC';
@@ -79,14 +84,24 @@ if(!isset($_GET['order']) && !isset($_GET['query']) && !isset($_GET['sort']) && 
 	}
 
 	//setup order and sorts GET	
-	if(isset($_GET['order'])){
-		$order = escape_string($_GET['order']);
-	}else{
-		$order = 'PACK';
+	$order = 'PACK';
+	if(isset($_GET['order'])) {
+		if(in_array($_GET['order'], $allowedSorts)) {
+			$order = escape_string($_GET['order']);
+		} else {
+			if(substr($_GET['order'], 0, 5) == "RAND(") {
+				$check = preg_replace('/[^0-9]+/', '', $_GET['order']);
+				if(ctype_digit($check)) {
+					$order = escape_string("RAND(" . $check . ")");
+				}
+			}
+		}
 	}
 
 	if(isset($_GET['sort'])){
-		$sort = escape_string($_GET['sort']);
+		if(in_array($_GET['sort'], $allowedDirs)) {
+			$sort = escape_string($_GET['sort']);
+		}
 	}else{
 		$sort = 'ASC';
 	}
@@ -114,7 +129,7 @@ $offset = ($pageno-1) * $no_of_records_per_page;
 
 //was the random button clicked?		
 if(isset($_GET['random'])){
-	$order = "RAND()";
+	$order = "RAND(" . $rand_seed . ")";
 }
 
 //get total songs and packs
@@ -142,6 +157,22 @@ if(strlen($query)>0){
 $result = mysqli_query($conn, $packlist_sql);
 while( $row = mysqli_fetch_assoc($result)){
 	$packlist = array_merge($packlist, array($row['pack'] => $row['id']));
+}
+
+$packExists = false;
+if(isset($_GET['pack'])) {
+	if(strlen($_GET['pack']) > 0) {
+		foreach($packlist as $key => $value) {
+			if($_GET['pack'] == $key) {
+				$packExists = true;
+				break;
+			}
+		}
+
+		if(!$packExists) {
+			die("erm, bad pack");
+		}
+	}
 }
 
 //show input field for searching database
@@ -262,7 +293,7 @@ $query = stripslashes($query);
 //show summary of results above table
 if (strlen($query)<1 && strlen($pack)<1){
 		echo '<div class="w3padding-small"><h4>All songs sorted ';
-			if($order == 'RAND()') {
+			if(substr($order, 0, 5) == 'RAND(') {
 			echo 'randomly'; 
 			}else{ echo 'by '.$order.'';
 			}
@@ -276,7 +307,7 @@ if (strlen($query)<1 && strlen($pack)<1){
 			echo ' in '.$pack;
 			}
 			echo ' sorted ';
-			if($order == 'RAND()') {
+			if(substr($order, 0, 5) == 'RAND(') {
 				echo 'randomly'; 
 				}else{ echo 'by '.$order.'';
 				}
